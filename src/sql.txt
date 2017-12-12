@@ -1,4 +1,4 @@
-ÈÕÖ¾±í
+æ—¥å¿—è¡¨
 CREATE TABLE `operlog` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `type` int(1) DEFAULT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE `operlog` (
   `time` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 )
-²¿ÃÅ±í
+éƒ¨é—¨è¡¨
 CREATE TABLE `department` (
   `departid` int(10) NOT NULL AUTO_INCREMENT,
   `departname` varchar(50) DEFAULT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE `department` (
   PRIMARY KEY (`departid`)
 )
 
-ÁªÏµÈË±í
+è”ç³»äººè¡¨
 CREATE TABLE `linkman` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(20) DEFAULT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE `linkman` (
    departid int(10) NOT NULL,
    PRIMARY KEY (`id`)
 )
-Ïà²á±í
+ç›¸å†Œè¡¨
 DROP TABLE IF EXISTS `photo`;
 CREATE TABLE `photo` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -43,7 +43,7 @@ CREATE TABLE `photo` (
 )
 
 
-¹«¸æ±í
+å…¬å‘Šè¡¨
 CREATE TABLE `notice` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `title` varchar(50) DEFAULT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE `notice` (
   `publishdate` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`)
 )
-Ô±¹¤±í
+å‘˜å·¥è¡¨
 DROP TABLE IF EXISTS `employee`;
 CREATE TABLE `employee` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -71,7 +71,7 @@ CREATE TABLE `employee` (
   `sure` int(1) DEFAULT 0,
   PRIMARY KEY (`id`)
 )
-¸öÈËÈÕ±¨±í
+ä¸ªäººæ—¥æŠ¥è¡¨
 DROP TABLE IF EXISTS `ownreport`;
 CREATE TABLE `ownreport` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -98,7 +98,7 @@ CREATE TABLE `ownreport` (
   `wflag` char(1) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) 
-¸öÈËÈÕ±¨±íÏêÇé±í
+ä¸ªäººæ—¥æŠ¥è¡¨è¯¦æƒ…è¡¨
 DROP TABLE IF EXISTS `ownreportdetail`;
 CREATE TABLE `ownreportdetail` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -110,9 +110,9 @@ CREATE TABLE `ownreportdetail` (
   `wtask` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) 
-²åÈëÊı¾İ
-INSERT INTO `report` VALUES ('1', '540', '1', '', '2', '1512000000', 'Î¬»¤ÏµÍ³ºÍÓÅ»¯', 'Î¬»¤ÏµÍ³ºÍÓÅ»¯¹¦ÄÜ', 'gc', null, '0', null, '-1', null, null, '665-6277-44627', '8', '13', '0', null);
-ÍøÕ¾ÇëÇó²ÎÊı
+æ’å…¥æ•°æ®
+INSERT INTO `report` VALUES ('1', '540', '1', '', '2', '1512000000', 'ç»´æŠ¤ç³»ç»Ÿå’Œä¼˜åŒ–', 'ç»´æŠ¤ç³»ç»Ÿå’Œä¼˜åŒ–åŠŸèƒ½', 'gc', null, '0', null, '-1', null, null, '665-6277-44627', '8', '13', '0', null);
+ç½‘ç«™è¯·æ±‚å‚æ•°
 DROP TABLE IF EXISTS `website`;
 CREATE TABLE `website` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -129,17 +129,17 @@ CREATE TABLE `website` (
   `referer` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 )
-²åÈëÊı¾İ
+æ’å…¥æ•°æ®
 INSERT INTO `website` VALUES ('1', 'http://60.174.249.206:9999/in/', 'Keep-Alive', 'application/x-www-form-urlencoded', 'gzip, deflate', 'http://60.174.249.206:9999/in/modules/prj/rep_daily_post.php', '60.174.249.206:9999', 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2', 'http://60.174.249.206:9999/in/user.php', 'http://60.174.249.206:9999/in/modules/prj/', 'http://60.174.249.206:9999/in/');
-ÓÃ»§±íÔö¼Ó×Ö¶Î£º
+ç”¨æˆ·è¡¨å¢åŠ å­—æ®µï¼š
 alter table employee add image varchar(20) 
-É¾³ıÁĞ
+åˆ é™¤åˆ—
  alter table employee drop online
-ĞŞ¸Ä³¤¶È
+ä¿®æ”¹é•¿åº¦
 alter table employee alter column password varchar(50) 
-ĞòÁĞºÅÇå0
+åºåˆ—å·æ¸…0
 ALTER sequence  SYSTEM_SEQUENCE_CFFAFC46_B049_4348_B0F4_9D6C79F02D02  RESTART WITH 1
-¿¼ÇÚ±í
+è€ƒå‹¤è¡¨
 DROP TABLE IF EXISTS `timetable`;
 CREATE TABLE `timetable` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -152,21 +152,18 @@ CREATE TABLE `timetable` (
   `explain1` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
 )
-ÃÜÂë£º
-e10adc3949ba59abbe56e057f20f883e-----¡·¡·¡·123456
-µ¼³öÎÄ¼ş
+å¯†ç ï¼š
+e10adc3949ba59abbe56e057f20f883e-----ã€‹ã€‹ã€‹123456
+å¯¼å‡ºæ–‡ä»¶
 CALL CSVWRITE('d:/test.csv', 'SELECT * FROM answer')
-µ¼ÈëÎÄ¼ş
+å¯¼å…¥æ–‡ä»¶
 INSERT INTO Answer( SELECT  * FROM  CSVREAD('d:/test.csv ')) ; 
-ÓÃ»§²åÈëÊı¾İ
-INSERT INTO `employee` VALUES ('1', '127.0.0.1', '¼ª¾ÅÑ§', 'e10adc3949ba59abbe56e057f20f883e', 'ji.jiuxue', '0', '1', '15352306080', '445576823@qq.com', '1', '0', '0',null,'0');
-INSERT INTO `employee` VALUES ('2', '10.52.31.24', 'ÌÆÇàÏÄ', 'e10adc3949ba59abbe56e057f20f883e', 'tang.qingxia', '0', '1', null, '945805173@qq.com', '1',  '0', '0',null,'0');
-INSERT INTO `employee` VALUES ('3', '10.52.31.21', '½ğè¯', 'e10adc3949ba59abbe56e057f20f883e', 'jin.xuan', '0', '1', null, '1214708924@qq.com', '1', '0', '0',null,'0');
-INSERT INTO `employee` VALUES ('4', '', '³¬¼¶¹ÜÀíÔ±', 'e10adc3949ba59abbe56e057f20f883e', 'admin', '1', '2', null, '1540077031@qq.com', '0',  '0', '0',null,'0');
+ç”¨æˆ·æ’å…¥æ•°æ®
+INSERT INTO `employee` VALUES ('4', '', 'è¶…çº§ç®¡ç†å‘˜', 'e10adc3949ba59abbe56e057f20f883e', 'admin', '1', '2', null, '1540077031@qq.com', '0',  '0', '0',null,'0');
 
 
 
-±³¾°ÇĞ»»´úÂë
+èƒŒæ™¯åˆ‡æ¢ä»£ç 
       //  Initialize Backgound Stretcher	   
 		$('BODY').bgStretcher({
 			images: ['img/sample-2.jpg', 'img/sample-8.jpg', 'img/sample-9.jpg',  'img/sample-11.jpg', 'img/sample-12.jpg'],
