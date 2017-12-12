@@ -13,6 +13,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
    <script type="text/javascript" src="js/jquery-1.12.1.min.js"></script> 
 <link href="<%=path %>/css/styles.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="js/date/WdatePicker.js"></script>
+<link href="<%=path %>/css/introjs.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="js/intro.js" ></script>
 <script type="text/javascript" src="js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="js/util.js" charset="utf-8"></script>
   <style>
@@ -276,6 +278,84 @@ function loginout(){
 				wlog:"工作日志不能为空",
 			}
 		});
+		 introJs().setOptions({
+                //对应的按钮
+                prevLabel:"上一步", 
+                nextLabel:"下一步",
+                skipLabel:"跳过",
+                doneLabel:"结束",
+                //对应的数组，顺序出现每一步引导提示
+                steps: [
+                
+                    {
+                        //第一步引导
+                        //这个属性类似于jquery的选择器， 可以通过jquery选择器的方式来选择你需要选中的对象进行指引
+                        element: '#username',
+                        //这里是每个引导框具体的文字内容，中间可以编写HTML代码
+                        intro: '请填写你的日报用户名',
+                        //这里可以规定引导框相对于选中对象出现的位置 top,bottom,left,right
+                        position: 'left'
+                    },
+                     {
+                        //第二步引导
+                        //这个属性类似于jquery的选择器， 可以通过jquery选择器的方式来选择你需要选中的对象进行指引
+                        element: '#password',
+                        //这里是每个引导框具体的文字内容，中间可以编写HTML代码
+                        intro: '请填写你的日报密码(内网网站登录密码,这个密码是被加密的)',
+                        //这里可以规定引导框相对于选中对象出现的位置 top,bottom,left,right
+                        position: 'left'
+                    },
+                     {
+                        //第三步引导
+                        //这个属性类似于jquery的选择器， 可以通过jquery选择器的方式来选择你需要选中的对象进行指引
+                        element: '#email',
+                        //这里是每个引导框具体的文字内容，中间可以编写HTML代码
+                        intro: '请填写你的可用邮箱很重要的！',
+                        //这里可以规定引导框相对于选中对象出现的位置 top,bottom,left,right
+                        position: 'left'
+                    },
+                    {
+                        //第四步引导
+                        //这个属性类似于jquery的选择器， 可以通过jquery选择器的方式来选择你需要选中的对象进行指引
+                        element: '#wdesc',
+                        //这里是每个引导框具体的文字内容，中间可以编写HTML代码
+                        intro: '请填写你的出勤记事,如果不清楚可以参考以前写的内容',
+                        //这里可以规定引导框相对于选中对象出现的位置 top,bottom,left,right
+                        position: 'left'
+                    },
+                     {
+                        //第五步引导
+                        //这个属性类似于jquery的选择器， 可以通过jquery选择器的方式来选择你需要选中的对象进行指引
+                        element: '#wtask',
+                        //这里是每个引导框具体的文字内容，中间可以编写HTML代码
+                        intro: '请填写你的项目任务,点击项目任务邮件 可以看到编号，将编号填上即可',
+                        //这里可以规定引导框相对于选中对象出现的位置 top,bottom,left,right
+                        position: 'left'
+                    },
+                     {
+                        //第五步引导
+                        //这个属性类似于jquery的选择器， 可以通过jquery选择器的方式来选择你需要选中的对象进行指引
+                        element: '#wlog',
+                        //这里是每个引导框具体的文字内容，中间可以编写HTML代码
+                        intro: '请填写你的工作日志,尽量写的通用一些',
+                        //这里可以规定引导框相对于选中对象出现的位置 top,bottom,left,right
+                        position: 'left'
+                    },
+                     {
+                        //第五步引导
+                        //这个属性类似于jquery的选择器， 可以通过jquery选择器的方式来选择你需要选中的对象进行指引
+                        element: '#submit',
+                        //这里是每个引导框具体的文字内容，中间可以编写HTML代码
+                        intro: '点击提交按钮即可',
+                        //这里可以规定引导框相对于选中对象出现的位置 top,bottom,left,right
+                        position: 'left'
+                    }
+                    
+                    
+                    
+                ]
+
+            }).start();
          });
          
      </script>
