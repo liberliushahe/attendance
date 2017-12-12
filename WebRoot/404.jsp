@@ -96,8 +96,6 @@ function appendResult(userText , className, iconClass){
   $('body').append(resultHTML);
   $('.result').delay(10000).fadeOut('1000');
 }
-
-
 function register($form) {
     $.ajax({
         type: $form.attr('method'),
