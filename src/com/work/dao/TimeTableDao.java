@@ -640,6 +640,7 @@ public class TimeTableDao {
 	 * @return none
 	 */
 	public void createUserReportBySynchro(String username,List<String> date){
+		System.out.println();
 		Connection con = DBconnection.getConnection();
 		String sql = "insert into timetable(username,date,starttime,endtime,weekend,holiday,explain1) values(?,?,?,?,?,?,?)";
 		String str="";
@@ -678,7 +679,7 @@ public class TimeTableDao {
 		//mysql数据库语法
 		//String findSQL1="alter table timetable AUTO_INCREMENT=1";
 		//h2数据库语法
-		String findSQL1="ALTER sequence  SYSTEM_SEQUENCE_CFFAFC46_B049_4348_B0F4_9D6C79F02D02  RESTART WITH 1";
+		String findSQL1="ALTER sequence  SYSTEM_SEQUENCE_41649BB9_0259_40FC_BA91_222E3D82BF3A  RESTART WITH 1";
 		PreparedStatement pstmt = null;					//声明预处理对象
 		try {
 			pstmt = conn.prepareStatement(findSQL);		//获得预处理对象
@@ -697,8 +698,12 @@ public class TimeTableDao {
    }
  //判断某一天是否是周末	
 	public String getWeek(int month,int day){
+		
 		String str="";
 		Calendar c=Calendar.getInstance();
+		 if((c.MONTH-2)==0){
+	        	c.set(Calendar.YEAR,c.get(Calendar.YEAR) - 1);
+	        }
 		c.set(Calendar.MONTH, month-1);	//设置月份
 		c.set(Calendar.DAY_OF_MONTH,day);
 		if(c.get(Calendar.DAY_OF_WEEK)==7){

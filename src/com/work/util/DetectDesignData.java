@@ -3,6 +3,7 @@ package com.work.util;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,17 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.HeaderIterator;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -38,7 +50,9 @@ public class DetectDesignData {
 		StringBuffer tmpcookies = new StringBuffer();
 		String loginUrl = website.getLoginurl();
 		
-		PostMethod postMethod = new PostMethod(loginUrl);
+		
+		PostMethod postMethod = new EncodePostMethod(loginUrl);
+		
 		
 		byte[] b = null;
 		try {
@@ -48,6 +62,7 @@ public class DetectDesignData {
 			e1.printStackTrace();
 		}
 		String pass=new String(b);
+		System.out.println(ownReport.getUsername()+"  "+pass);
 		NameValuePair[] data = { new NameValuePair("uname", ownReport.getUsername()), new NameValuePair("pass", pass),
 				new NameValuePair("xoops_redirect", "/in/"), new NameValuePair("op", "login") };
 		
@@ -72,7 +87,6 @@ public class DetectDesignData {
 		GetMethod getMethod = new GetMethod(getUrl);
 		
 		getMethod.setRequestHeader("cookie", tmpcookies.toString());
-	
 		getMethod.setRequestHeader("Referer", website.getReferer());
 		getMethod.setRequestHeader("User-Agent",website.getAgent());
 		getMethod.setRequestHeader("Content-Type", website.getContenttype());
@@ -199,64 +213,71 @@ public class DetectDesignData {
 
 /**
  * 获取用户数据列表	
+ * 
+ * @throws HttpException 
  */
-	public static List<String> getUserMonthReport(OwnReport ownReport,WebSite website,String time) {
-		/**
-		 * 模拟登录开始
-		 */
-		HttpClient httpClient = new HttpClient();              //每次登录都创建一个新的对象
-		StringBuffer tmpcookies = new StringBuffer();
-		String loginUrl = website.getLoginurl();
-		
-		PostMethod postMethod = new PostMethod(loginUrl);
-		
-		NameValuePair[] data = { new NameValuePair("uname", ownReport.getUsername()), new NameValuePair("pass", ownReport.getPassword()),
-				new NameValuePair("xoops_redirect", "/in/"), new NameValuePair("op", "login") };
-		
-		postMethod.setRequestBody(data);
-		httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
-		try {
-			httpClient.executeMethod(postMethod);
-			
-			Cookie[] cookies = httpClient.getState().getCookies();
-			for (Cookie c : cookies) {
-				tmpcookies.append(c.toString() + ";");
-			}	
-		} catch (HttpException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String listUrl = website.getListurl();
-		listUrl=listUrl+"?time1="+time;
-		GetMethod getMethod = new GetMethod(listUrl);
-		System.out.println(listUrl);
-		getMethod.setRequestHeader("cookie", tmpcookies.toString());
-		getMethod.setRequestHeader("Referer", website.getReferer());
-		getMethod.setRequestHeader("User-Agent",website.getAgent());
-		getMethod.setRequestHeader("Content-Type", website.getContenttype());
-		getMethod.setRequestHeader("Accept-Language", website.getLanguage());
-		getMethod.setRequestHeader("Accept-Encoding", website.getEncoding());
-		getMethod.setRequestHeader("Connection", website.getConnection());
-		getMethod.setRequestHeader("Host", website.getHost());
-		String htmltext = null;
-		try {
-			httpClient.executeMethod(getMethod);
-			htmltext = getMethod.getResponseBodyAsString();
-			//System.out.println(htmltext);
-		} catch (HttpException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	@SuppressWarnings("deprecation")
+	public static List<String> getUserMonthReport(OwnReport ownReport,WebSite website,String time) throws HttpException, IOException {
+	//获取httpclient对象
+	CloseableHttpClient httpClient=	HttpClients.custom().setDefaultCookieStore(new BasicCookieStore()).setRedirectStrategy(new LaxRedirectStrategy()).build();
+	//数据库获取登录首页链接
+	String indexUrl = website.getListurl();	
+	//数据库获取登录链接
+	String loginUrl = website.getLoginurl();	
+	//数据库获取登录链接
+	String loginName = ownReport.getUsername();
+	//数据库获取登录链接
+	String loginPass = ownReport.getPassword();
+	//数据库获取列表链接
+	String listUrl = website.getReferer();
+	//设置密码解密功能
+	String newpass=null;
+	try {
+	byte[] b=BASE64.decryptBASE64(loginPass);
+	 newpass=new String(b);
+	} catch (IOException e3) {
+		// TODO Auto-generated catch block
+		e3.printStackTrace();
+	}	
+    //访问首页，获取cookies,保存在httpclient
+	HttpPost httpPost=new HttpPost(indexUrl);	
+	httpClient.execute(httpPost);	
+	//开始模拟登录	
+	HttpUriRequest login=RequestBuilder.post().setUri(loginUrl)
+			.addParameter("uname",loginName )
+            .addParameter("pass", newpass)
+            .addParameter("xoops_redirect", "/in/")
+            .addParameter("op", "login")
+            .build();	
+	CloseableHttpResponse response =httpClient.execute(login);
+	//String content = EntityUtils.toString(response.getEntity());
+    EntityUtils.consume(response.getEntity());
+    HeaderIterator redirect = response.headerIterator("location");
+    while (redirect.hasNext()) {
+        // 使用get请求，访问登陆后的页面
+        HttpGet getMethod = new HttpGet(redirect.next().toString());
+        CloseableHttpResponse response2 = httpClient.execute(getMethod);
+    }
+	//获取数据列表
+	listUrl=listUrl+"?time1="+time;
+	 HttpGet getList=new HttpGet(listUrl);
+     CloseableHttpResponse response4= httpClient.execute(getList);
+     String htmltext = null;
+     htmltext=EntityUtils.toString(response4.getEntity(),"UTF-8");	
 		/**
 		 * 解析当前用户上月的日报数据
 		 * 
 		 */
 		Date date=new Date();
 		SimpleDateFormat format=new SimpleDateFormat("yyyy");
+		Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date); 
+        if((calendar.MONTH-2)==0){
+        	calendar.set(Calendar.YEAR,calendar.get(Calendar.YEAR) - 1);
+        }
+        Date upmonth = calendar.getTime();
+		String year=format.format(upmonth);
+         System.out.println(year);
 		List<String> list=new ArrayList<String>();
 		Document doc=Jsoup.parse(htmltext); 
 		Elements elements=doc.getElementsByClass("outer");
@@ -267,7 +288,6 @@ public class DetectDesignData {
 		    String value=e2.get(0).text();
 		    value=value.substring(0, value.indexOf("("));
 		    value=value.replace("-", "/");
-	        String year= format.format(date);
 		    value=year+"/"+value;
 		    value=formatUserDate(value);		   		    	
 		    list.add(value);

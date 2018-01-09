@@ -1,6 +1,10 @@
 package com.work.controll;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -10,11 +14,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.work.dao.EmployeeDao;
+import com.work.dao.OwnReportDaoImpl;
+import com.work.dao.TimeTableDao;
+import com.work.dao.WebSiteDaoImpl;
 import com.work.entity.Employee;
+import com.work.entity.OwnReport;
 import com.work.entity.TimeTable;
+import com.work.entity.WebSite;
 import com.work.service.EmployeeService;
-import com.work.service.OwnReportService;
 import com.work.service.TimeTableService;
+import com.work.util.DetectDesignData;
 import com.work.util.Page;
 import com.work.util.PageUtil;
 import com.work.util.SendEmail;
@@ -307,5 +317,49 @@ public class getListAction {
 	public String deleteData(){
 		employeeservice.modifyUserSureToZero();
 		return timetableservice.deleteData();
+	}
+	//同步数据
+	@RequestMapping("asyncData.do")
+	public String asyncData(){
+		Date date=new Date();
+		WebSiteDaoImpl sitedao=new WebSiteDaoImpl();	
+		OwnReportDaoImpl dao=new OwnReportDaoImpl();
+		TimeTableDao timetabledao=new TimeTableDao();
+		WebSite website=new WebSite();
+	    website= sitedao.getWebSiteById(1);
+       	SimpleDateFormat format1=new SimpleDateFormat("yy-MM-01");
+    	//同步数据
+		Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date); // 设置为当前时间
+         //设置如果当月的上一月是12月份则当年减1
+        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1); // 设置为上一个月
+        Date upmonth = calendar.getTime();
+		String startMonth=format1.format(upmonth);
+    	List<OwnReport> list=dao.getAllOwnReportByAutoAsyn();     	
+    	Iterator<OwnReport> it=list.iterator();   
+	    website= sitedao.getWebSiteById(1);
+	    System.out.println("****************************更新数据开始。。。。。。。。");
+    	while(it.hasNext()){
+        	OwnReport ownReport=new OwnReport(); 
+        	ownReport=it.next();
+        	List<String> dates=null;
+        	//获取清洗的数据
+        try{
+        	 dates=DetectDesignData.getUserMonthReport(ownReport, website,startMonth);
+        }catch(Exception e){
+        	System.out.println("》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》");
+        	System.out.println("》》》》》》》》》》》》》》用户登录异常》》》》》》》》》》》》》》》");
+        	System.out.println("》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》");
+        	System.out.println(ownReport.getUsername()+"密码登录出现异常");
+        	continue;
+        }
+        	//自动生成数据
+        	if(dao.getLinkManByReportId(ownReport.getUsername())!=null){
+				timetabledao.createUserReportBySynchro(dao.getLinkManByReportId(ownReport.getUsername()).getUsername(), dates);
+	        	System.out.println(ownReport.getUsername()+" 数据更新完毕-------------》》》》》》》》》");
+        	}	
+		
+    	}
+    	return "1";
 	}
 }
