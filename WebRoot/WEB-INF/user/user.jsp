@@ -328,20 +328,41 @@ $.ajax({
             </tr>
           
             <c:forEach items="${List}" var="timetable">
-           
-            <tr class="update-form">
+             <c:choose>
+               <c:when test="${timetable.weekend=='是'}">
+               <tr class="update-form" >
+                <td style="background-color:yellow;"><input type="checkbox" name="check" class="check" value=${timetable.id}/></td>             
+                <td style="background-color:yellow;">${timetable.id}</td>
+                <td style="background-color:yellow;">${timetable.username}</td>
+                <td style="background-color:yellow;">${timetable.date}</td>
+                <td style="background-color:yellow;">${timetable.starttime}</td>
+                <td style="background-color:yellow;">${timetable.endtime}</td> 
+                <td style="background-color:yellow;">${timetable.weekend}</td>                     
+                <td style="background-color:yellow;">${timetable.holiday}</td>
+                <td style="background-color:yellow;">${timetable.explain}</td>
+                <td style="background-color:yellow;"><a  href="#" class="yellow-xt" id="edit">编辑</a><a href="delete.do?id=${timetable.id}&currentPage=${page.currentPage}" class="blue-xt" onclick="return confirm('确定删除？')">删除</a></td>
+            </tr>  
+               </c:when>
+               <c:otherwise>
+                <tr class="update-form">
                 <td><input type="checkbox" name="check" class="check" value=${timetable.id}/></td>             
                 <td>${timetable.id}</td>
                 <td>${timetable.username}</td>
                 <td>${timetable.date}</td>
                 <td>${timetable.starttime}</td>
-                <td>${timetable.endtime}</td>
-                
-                <td>${timetable.weekend}</td>                             
+                <td>${timetable.endtime}</td> 
+                 <td>${timetable.weekend}</td>                         
                 <td>${timetable.holiday}</td>
                 <td>${timetable.explain}</td>
                 <td><a  href="#" class="yellow-xt" id="edit">编辑</a><a href="delete.do?id=${timetable.id}&currentPage=${page.currentPage}" class="blue-xt" onclick="return confirm('确定删除？')">删除</a></td>
-            </tr>
+            </tr> 
+               </c:otherwise>
+               </c:choose>
+            
+            
+            
+            
+           
             </c:forEach>
         </table>
     </div>

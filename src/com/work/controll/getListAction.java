@@ -2,6 +2,7 @@ package com.work.controll;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -321,7 +322,25 @@ public class getListAction {
 	//同步数据
 	@RequestMapping("asyncData.do")
 	public String asyncData(){
-		Date date=new Date();
+		GetDataListByThread t=new GetDataListByThread();
+		GetDataListByThread1 t1=new GetDataListByThread1();
+		Thread t2=new Thread(t);
+		Thread t3=new Thread(t1);
+		t2.start();
+		t3.start();
+    	return "1";
+	}
+}
+class GetDataListByThread implements Runnable {
+	public List<OwnReport> getList(){
+		OwnReportDaoImpl dao=new OwnReportDaoImpl();
+    	return dao.getAllOwnReportByAutoAsyn();
+    	
+	}
+	
+	public void run() {
+		// TODO Auto-generated method stub
+		Date date=new Date();	
 		WebSiteDaoImpl sitedao=new WebSiteDaoImpl();	
 		OwnReportDaoImpl dao=new OwnReportDaoImpl();
 		TimeTableDao timetabledao=new TimeTableDao();
@@ -335,8 +354,80 @@ public class getListAction {
         calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1); // 设置为上一个月
         Date upmonth = calendar.getTime();
 		String startMonth=format1.format(upmonth);
-    	List<OwnReport> list=dao.getAllOwnReportByAutoAsyn();     	
-    	Iterator<OwnReport> it=list.iterator();   
+		List<OwnReport> list=getList();
+		List<OwnReport> listnew=new ArrayList<OwnReport>();
+		int length=list.size();
+		if(length%2==0){
+			for(int t=0;t<length/2;t++){
+			listnew.add(list.get(t));	
+			}
+		}else{
+		for(int t=0;t<length/2;t++){
+			listnew.add(list.get(t));	
+			}
+		}		
+    	Iterator<OwnReport> it=listnew.iterator();   
+	    website= sitedao.getWebSiteById(1);
+	    System.out.println("****************************更新数据开始。。。。。。。。");
+    	while(it.hasNext()){
+        	OwnReport ownReport=new OwnReport(); 
+        	ownReport=it.next();
+        	
+        	List<String> dates=null;
+        	//获取清洗的数据
+        try{
+        	 dates=DetectDesignData.getUserMonthReport(ownReport, website,startMonth);
+        }catch(Exception e){
+        	System.out.println("》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》");
+        	System.out.println("》》》》》》》》》》》》》》用户登录异常》》》》》》》》》》》》》》》");
+        	System.out.println("》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》");
+        	System.out.println(ownReport.getUsername()+"密码登录出现异常");
+        	continue;
+        }
+        	//自动生成数据
+        	if(dao.getLinkManByReportId(ownReport.getUsername())!=null){
+				timetabledao.createUserReportBySynchro(dao.getLinkManByReportId(ownReport.getUsername()).getUsername(), dates);
+	        	System.out.println(ownReport.getUsername()+" 数据更新完毕-------------》》》》》》》》》");
+        	}	
+		
+    	}
+	}
+
+}
+ class GetDataListByThread1 implements Runnable {
+	public List<OwnReport> getList(){
+		OwnReportDaoImpl dao=new OwnReportDaoImpl();
+    	return dao.getAllOwnReportByAutoAsyn();
+    	
+	}
+	public void run() {
+		Date date=new Date();	
+		WebSiteDaoImpl sitedao=new WebSiteDaoImpl();	
+		OwnReportDaoImpl dao=new OwnReportDaoImpl();
+		TimeTableDao timetabledao=new TimeTableDao();
+		WebSite website=new WebSite();
+	    website= sitedao.getWebSiteById(1);
+       	SimpleDateFormat format1=new SimpleDateFormat("yy-MM-01");
+    	//同步数据
+		Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date); // 设置为当前时间
+         //设置如果当月的上一月是12月份则当年减1
+        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1); // 设置为上一个月
+        Date upmonth = calendar.getTime();
+		String startMonth=format1.format(upmonth);
+		List<OwnReport> list=getList();
+		List<OwnReport> listnew=new ArrayList<OwnReport>();
+		int length=list.size();
+		if(length%2==0){
+			for(int t=length/2;t<length;t++){
+			listnew.add(list.get(t));	
+			}
+		}else{
+		for(int t=length/2;t<length;t++){
+			listnew.add(list.get(t));	
+			}
+		}
+    	Iterator<OwnReport> it=listnew.iterator();   
 	    website= sitedao.getWebSiteById(1);
 	    System.out.println("****************************更新数据开始。。。。。。。。");
     	while(it.hasNext()){
@@ -360,6 +451,6 @@ public class getListAction {
         	}	
 		
     	}
-    	return "1";
 	}
+
 }
